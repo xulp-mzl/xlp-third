@@ -18,6 +18,7 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.xlp.assertion.AssertUtils;
 import org.xlp.assertion.IllegalObjectException;
 import org.xlp.consts.CharsetNameConsts;
+import org.xlp.utils.XLPOutputInfoUtil;
 import org.xlp.utils.XLPStackTraceUtil;
 import org.xlp.utils.XLPStringUtil;
 import org.xlp.utils.XLPSystemParamUtil;
@@ -501,7 +502,7 @@ public class FTPOption {
 			try {
 				ftpClient.changeWorkingDirectory(currentDir);
 			} catch (IOException e) {
-				System.out.println(e.getMessage());
+				XLPOutputInfoUtil.println(e.getMessage());
 			}
 		}
 	}

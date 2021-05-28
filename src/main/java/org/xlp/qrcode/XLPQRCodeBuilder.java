@@ -14,6 +14,8 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import org.xlp.utils.XLPOutputInfoUtil;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -147,9 +149,9 @@ public class XLPQRCodeBuilder {
 					.writeToPath(initQRCode(), format, file.toPath());
 			writeSuccess = true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		}
 		return writeSuccess;
 	}
@@ -203,11 +205,11 @@ public class XLPQRCodeBuilder {
 			MatrixToImageWriter.writeToStream(initQRCode(), format, out);
 			writeSuccess = true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		} catch (WriterException e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		}
 		return writeSuccess;
 	}
@@ -436,9 +438,9 @@ public class XLPQRCodeBuilder {
 			ImageIO.write(genBarcode(iconPath, null), format, file);
 			writeSuccess = true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		}
 		return writeSuccess;
 	}
@@ -472,11 +474,11 @@ public class XLPQRCodeBuilder {
 			ImageIO.write(genBarcode(iconPath, null), format, out);
 			writeSuccess = true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		} catch (WriterException e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		}
 		return writeSuccess;
 	}
@@ -498,9 +500,9 @@ public class XLPQRCodeBuilder {
 			ImageIO.write(genBarcode(null, inputStream), format, file);
 			writeSuccess = true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		}
 		return writeSuccess;
 	}
@@ -534,11 +536,11 @@ public class XLPQRCodeBuilder {
 			ImageIO.write(genBarcode(null, inputStream), format, out);
 			writeSuccess = true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		} catch (WriterException e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 		}
 		return writeSuccess;
 	}

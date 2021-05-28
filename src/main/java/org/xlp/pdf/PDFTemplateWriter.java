@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.xlp.assertion.AssertUtils;
 import org.xlp.assertion.IllegalObjectException;
+import org.xlp.utils.XLPOutputInfoUtil;
 import org.xlp.utils.XLPStringUtil;
 import org.xlp.utils.io.XLPIOUtil;
 
@@ -79,7 +80,7 @@ public class PDFTemplateWriter {
 		try {
 			BASE_FONT = BaseFont.createFont("STSongStd-Light", DEFAULT_FONT_ENCONDING, BaseFont.NOT_EMBEDDED);
 		} catch (DocumentException | IOException e) {
-			System.out.println("仿宋字体创建失败：" + e.getMessage());
+			XLPOutputInfoUtil.println("仿宋字体创建失败：" + e.getMessage());
 		}
 	}
 

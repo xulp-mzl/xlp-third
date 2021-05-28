@@ -17,6 +17,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.xlp.utils.XLPOutputInfoUtil;
 import org.xlp.utils.collection.XLPCollectionUtil;
 
 /**
@@ -124,7 +125,7 @@ public class XLPEmailUtil {
 			transport.sendMessage(message, message.getAllRecipients());
 			transport.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			XLPOutputInfoUtil.println(e);
 			System.err.println("--------邮件发送失败，失败原因是：" + e.getMessage());
 			return false;
 		} finally {
