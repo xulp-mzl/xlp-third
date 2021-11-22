@@ -502,7 +502,7 @@ public class DocxBookmarkTemplate implements Closeable {
 	public DocxBookmarkTemplate insertElement(String bookmarkName, Child child){
 		Map<String, Child> insetElements = new HashMap<String, Child>();
 		insetElements.put(bookmarkName, child);
-		return insertElement(insetElements);
+		return insertElements(insetElements);
 	}
 	
 	/**
@@ -511,7 +511,7 @@ public class DocxBookmarkTemplate implements Closeable {
 	 * @param insetElements 插入的内容(key:书签名称，value:插入的元素对象)
 	 * @return this
 	 */
-	public DocxBookmarkTemplate insertElement(Map<String, Child> insetElements){
+	public DocxBookmarkTemplate insertElements(Map<String, Child> insetElements){
 		if (insetElements == null)  return this;
 		
 		Set<String> keys = insetElements.keySet();
@@ -656,8 +656,8 @@ public class DocxBookmarkTemplate implements Closeable {
 	
 	public static void main(String[] args) throws Docx4JException {
 		DocxBookmarkTemplate docxBookmarkTemplate = new DocxBookmarkTemplate("f:/12.docx");
-		docxBookmarkTemplate.beforeInsertText("title", "收拾hj").afterInsertText("space", "哈哈1")
-				.replaceText("id", "yee ").replaceText("textBox", "哈哈textBox");
+		docxBookmarkTemplate.beforeInsertText("title", "收拾2hj").afterInsertText("space", "哈哈2")
+				.replaceText("id", "yee ").replaceText("textBox", "哈哈").replaceText("content1", "ss是");
 		docxBookmarkTemplate.save(new File("f:/13.docx"));
 		docxBookmarkTemplate.close();
 	}
