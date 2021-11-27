@@ -2,6 +2,7 @@ package org.xlp.docx;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -15,11 +16,13 @@ import javax.xml.bind.JAXBElement;
 
 import org.docx4j.Docx4J;
 import org.docx4j.TraversalUtil;
+import org.docx4j.dml.wordprocessingDrawing.Inline;
 import org.docx4j.finders.RangeFinder;
 import org.docx4j.jaxb.Context;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.Part;
+import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
 import org.docx4j.openpackaging.parts.WordprocessingML.FooterPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.HeaderPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
@@ -30,6 +33,7 @@ import org.docx4j.wml.CTBookmark;
 import org.docx4j.wml.CTMarkupRange;
 import org.docx4j.wml.ContentAccessor;
 import org.docx4j.wml.Document;
+import org.docx4j.wml.Drawing;
 import org.docx4j.wml.ObjectFactory;
 import org.docx4j.wml.P;
 import org.docx4j.wml.R;
@@ -38,8 +42,11 @@ import org.jvnet.jaxb2_commons.ppp.Child;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlp.assertion.AssertUtils;
+import org.xlp.assertion.IllegalObjectException;
+import org.xlp.utils.XLPArrayUtil;
 import org.xlp.utils.XLPStringUtil;
 import org.xlp.utils.collection.XLPCollectionUtil;
+import org.xlp.utils.io.XLPIOUtil;
 import org.xlp.utils.io.path.XLPFilePathUtil;
 
 /**
@@ -71,6 +78,12 @@ public class DocxBookmarkTemplate implements Closeable {
 	 * word书签集合
 	 */
 	private List<CTMarkupRange> markupRanges;
+	
+	/**
+	 * 插入图片时所需的数据
+	 */
+	private int id1 = 0;
+	private int id2 = 1;
 
 	/**
 	 * 构造函数
@@ -654,12 +667,192 @@ public class DocxBookmarkTemplate implements Closeable {
 		save(outputStream, null);
 	}
 	
-	public static void main(String[] args) throws Docx4JException {
-		DocxBookmarkTemplate docxBookmarkTemplate = new DocxBookmarkTemplate("f:/12.docx");
-		docxBookmarkTemplate.beforeInsertText("title", "收拾2hj").afterInsertText("space", "哈哈2")
-				.replaceText("id", "yee ").replaceText("textBox", "哈哈").replaceText("content1", "ss是");
-		docxBookmarkTemplate.save(new File("f:/13.docx"));
-		docxBookmarkTemplate.close();
+	/**
+	 * 在指定书签名称位置插入图片
+	 * 
+	 * @param bookmarkName 书签名称
+	 * @param bytes 图片字节数组
+	 * @param maxWidth 图片最大宽度
+	 * @return
+	 */
+	public DocxBookmarkTemplate insertImage(String bookmarkName, byte[] bytes, int maxWidth){
+		if (!XLPArrayUtil.isEmpty(bytes)) {
+			BinaryPartAbstractImage imagePart = null;
+	        // 插入一个行内图片
+            try {
+				imagePart = BinaryPartAbstractImage.createImagePart(wordprocessing, bytes);
+            } catch (Exception e) {
+				if(LOGGER.isErrorEnabled()){
+					LOGGER.error("在书签名为【" + bookmarkName + "】处插入图片失败！", e); 
+				}
+			}
+            insertImage(bookmarkName, imagePart, maxWidth);
+		}
+		return this;
 	}
-
+	
+	/**
+	 * 在指定书签名称位置插入图片
+	 * 
+	 * @param bookmarkName 书签名称
+	 * @param bytes 图片字节数组
+	 * @return
+	 */
+	public DocxBookmarkTemplate insertImage(String bookmarkName, byte[] bytes){
+		//-1查看docx源码得到的
+		return insertImage(bookmarkName, bytes, -1);
+	}
+	
+	/**
+	 * 在指定书签名称位置插入图片
+	 * 
+	 * @param bookmarkName 书签名称
+	 * @param imageInputStream 图片输入流
+	 * @param maxWidth 图片最大宽度
+	 * @throws NullPointerException 假如参数图片输入流为null，则抛出该异常
+	 * @return 
+	 */
+	public DocxBookmarkTemplate insertImage(String bookmarkName, InputStream imageInputStream, int maxWidth){
+		AssertUtils.isNotNull(imageInputStream, "imageInputStream paramter is null!");
+		try {
+			insertImage(bookmarkName, XLPIOUtil.IOToByteArray(imageInputStream, false), maxWidth);
+		} catch (IOException e) {
+			if(LOGGER.isErrorEnabled()){
+				LOGGER.error("在书签名为【" + bookmarkName + "】处插入图片失败！", e); 
+			}
+		}
+		return this;
+	}
+	
+	/**
+	 * 在指定书签名称位置插入图片
+	 * 
+	 * @param bookmarkName 书签名称
+	 * @param imageInputStream 图片输入流
+	 * @throws NullPointerException 假如参数图片输入流为null，则抛出该异常
+	 * @return 
+	 */
+	public DocxBookmarkTemplate insertImage(String bookmarkName, InputStream imageInputStream){
+		//-1查看docx源码得到的
+		return insertImage(bookmarkName, imageInputStream, -1);
+	}
+	
+	/**
+	 * 在指定书签名称位置插入图片
+	 * 
+	 * @param bookmarkName 书签名称
+	 * @param imagePart
+	 * @param maxWidth 图片最大宽度
+	 * @return
+	 */
+	public DocxBookmarkTemplate insertImage(String bookmarkName, BinaryPartAbstractImage imagePart, int maxWidth){
+		if (imagePart != null) {
+			// 新增image
+	        ObjectFactory factory = Context.getWmlObjectFactory();
+	        R run = factory.createR();
+	        Drawing drawing = factory.createDrawing();
+	        // 最后一个是限制图片的宽度，缩放的依据
+            try {
+				Inline inline = imagePart.createImageInline(null, null, id1++, id2++, false, maxWidth);
+				drawing.getAnchorOrInline().add(inline);
+                run.getContent().add(drawing);
+                insertElement(bookmarkName, run);
+            } catch (Exception e) {
+				if(LOGGER.isErrorEnabled()){
+					LOGGER.error("在书签名为【" + bookmarkName + "】处插入图片失败！", e); 
+				}
+			}
+		}
+		return this;
+	}
+	
+	/**
+	 * 在指定书签名称位置插入图片
+	 * 
+	 * @param bookmarkName 书签名称
+	 * @param imagePart
+	 * @return
+	 */
+	public DocxBookmarkTemplate insertImage(String bookmarkName, BinaryPartAbstractImage imagePart){
+		//-1查看docx源码得到的
+		return insertImage(bookmarkName, imagePart, -1);
+	}
+	
+	/**
+	 * 在指定书签名称位置插入图片
+	 * 
+	 * @param bookmarkName 书签名称
+	 * @param imageFile 图片文件
+	 * @param maxWidth 图片最大宽度
+	 * @throws NullPointerException 假如参数图片为null，则抛出该异常
+	 * @throws IllegalObjectException 假如给定的文件是目录或不存在，则抛出该异常
+	 * @return 
+	 */
+	public DocxBookmarkTemplate insertImage(String bookmarkName, File imageFile, int maxWidth){
+		AssertUtils.assertFile(imageFile);
+		BinaryPartAbstractImage imagePart = null;
+        // 插入一个行内图片
+        try {
+			imagePart = BinaryPartAbstractImage.createImagePart(wordprocessing, imageFile);
+        } catch (Exception e) {
+			if(LOGGER.isErrorEnabled()){
+				LOGGER.error("在书签名为【" + bookmarkName + "】处插入图片失败！", e); 
+			}
+		}
+        insertImage(bookmarkName, imagePart, maxWidth);
+		return this;
+	}
+	
+	/**
+	 * 在指定书签名称位置插入图片
+	 * 
+	 * @param bookmarkName 书签名称
+	 * @param imageFile 图片文件
+	 * @throws NullPointerException 假如参数图片为null，则抛出该异常
+	 * @throws IllegalObjectException 假如给定的文件是目录或不存在，则抛出该异常
+	 * @return 
+	 */
+	public DocxBookmarkTemplate insertImage(String bookmarkName, File imageFile){
+		//-1查看docx源码得到的
+		return insertImage(bookmarkName, imageFile, -1);
+	}
+	
+	/**
+	 * 在指定书签名称位置插入图片
+	 * 
+	 * @param bookmarkName 书签名称
+	 * @param imageFilePath 图片文件路径
+	 * @param maxWidth 图片最大宽度
+	 * @throws NullPointerException 假如参数图片为null或空，则抛出该异常
+	 * @throws IllegalObjectException 假如给定的文件路径是目录或不存在，则抛出该异常
+	 * @return 
+	 */
+	public DocxBookmarkTemplate insertImage(String bookmarkName, String imageFilePath, int maxWidth){
+		AssertUtils.isNotNull(imageFilePath, "imageFilePath paramter is null or empty!");
+		insertImage(bookmarkName, new File(imageFilePath), maxWidth); 
+		return this;
+	}
+	
+	/**
+	 * 在指定书签名称位置插入图片
+	 * 
+	 * @param bookmarkName 书签名称
+	 * @param imageFilePath 图片文件路径
+	 * @throws NullPointerException 假如参数图片为null或空，则抛出该异常
+	 * @throws IllegalObjectException 假如给定的文件路径是目录或不存在，则抛出该异常
+	 * @return 
+	 */
+	public DocxBookmarkTemplate insertImage(String bookmarkName, String imageFilePath){
+		//-1查看docx源码得到的
+		return insertImage(bookmarkName, imageFilePath, -1);
+	}
+	
+	/**
+	 * 获取word处理器
+	 * 
+	 * @return
+	 */
+	public WordprocessingMLPackage getWordprocessing() {
+		return wordprocessing;
+	}
 }

@@ -1,7 +1,7 @@
 package org.xlp.xlp_third;
 
 import org.xlp.excel.annotation.ExcelField;
-import org.xlp.json.annotation.FieldName;
+import org.xlp.javabean.annotation.FieldName;
 
 public class A {
 	@ExcelField(name="bean1")
