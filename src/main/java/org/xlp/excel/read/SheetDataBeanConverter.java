@@ -41,7 +41,7 @@ public class SheetDataBeanConverter<T> extends MapBeanAbstract<T> {
 		super(processer);
 	}
 
-	private String virtualFieldName(PropertyDescriptor<T> pd) {
+	private String virtualFieldName(PropertyDescriptor<?> pd) {
 		String virtualFieldName = null;
 		if (isUsedAnnotation) {
 			ExcelField excelField = pd.getFieldAnnotation(ExcelField.class);
@@ -60,12 +60,12 @@ public class SheetDataBeanConverter<T> extends MapBeanAbstract<T> {
 	}
 
 	@Override
-	protected String virtualReadFieldName(PropertyDescriptor<T> pd) {
+	protected String virtualReadFieldName(PropertyDescriptor<?> pd) {
 		return virtualFieldName(pd);
 	}
 
 	@Override
-	protected String virtualWriteFieldName(PropertyDescriptor<T> pd) {
+	protected String virtualWriteFieldName(PropertyDescriptor<?> pd) {
 		return virtualFieldName(pd);
 	}
 
@@ -75,6 +75,11 @@ public class SheetDataBeanConverter<T> extends MapBeanAbstract<T> {
 
 	public void setUsedAnnotation(boolean isUsedAnnotation) {
 		this.isUsedAnnotation = isUsedAnnotation;
+	}
+
+	@Override
+	protected boolean canUseBeanAnnotation() {
+		return isUsedAnnotation;
 	}
 
 }
