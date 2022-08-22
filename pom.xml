@@ -21,7 +21,6 @@
 		<ftp.commons.net>3.6</ftp.commons.net>
 		<itextpdf.version>5.5.13.2</itextpdf.version>
 		<itext-asian.version>5.2.0</itext-asian.version>
-		<docx4j.version>8.3.1</docx4j.version>
 		<slf4j-api.version>1.7.30</slf4j-api.version>
 		<commons-compress.version>1.21</commons-compress.version>
 	</properties>
@@ -110,95 +109,6 @@
 			<version>${slf4j-api.version}</version>
 		</dependency>
 
-		<!-- docx文件操作 -->
-		<dependency>
-			<groupId>org.docx4j</groupId>
-			<artifactId>docx4j-JAXB-Internal</artifactId>
-			<version>${docx4j.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-codec</groupId>
-					<artifactId>commons-codec</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>net.arnx</groupId>
-					<artifactId>wmf2svg</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpclient</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.google.errorprone</groupId>
-					<artifactId>error_prone_annotations</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.plutext</groupId>
-					<artifactId>jaxb-svg11</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.docx4j</groupId>
-					<artifactId>docx4j-openxml-objects-sml</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.antlr</groupId>
-					<artifactId>antlr-runtime</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.docx4j.org.apache</groupId>
-					<artifactId>xalan-metainf</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>jcl-over-slf4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.antlr</groupId>
-					<artifactId>stringtemplate</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-databind</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.checkerframework</groupId>
-					<artifactId>checker-qual</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>commons-lang3</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.docx4j</groupId>
-					<artifactId>docx4j-openxml-objects-pml</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>net.engio</groupId>
-					<artifactId>mbassador</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.pdfbox</groupId>
-					<artifactId>fontbox</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.xmlgraphics</groupId>
-					<artifactId>fop-events</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>commons-compress</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>

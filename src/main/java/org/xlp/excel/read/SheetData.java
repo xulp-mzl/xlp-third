@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.xlp.excel.util.ExcelUtils;
 import org.xlp.utils.XLPObjectUtil;
 import org.xlp.utils.XLPStringUtil;
 
@@ -148,51 +148,7 @@ public class SheetData {
 					rowData = new Object[cellnum];
 					for (int j = 0; j < cellnum; j++) {
 						cell = row.getCell(j);
-						if (cell != null) {
-							// 判断单元格的数据类型
-							switch (cell.getCellType()) {
-								case NUMERIC: // 数字
-									if (DateUtil.isCellDateFormatted(cell)) {
-										rowData[j] = cell.getDateCellValue();
-									}else {
-										rowData[j] = cell.getNumericCellValue();
-									}
-									break;
-								case STRING: // 字符串
-									rowData[j] = cell.getStringCellValue();
-									break;
-								case BOOLEAN: // Boolean
-									rowData[j] = cell.getBooleanCellValue();
-									break;
-								case FORMULA: // 公式
-									Cell temp = cell;
-									if (formulaEvaluator != null) {
-										cell = formulaEvaluator.evaluateInCell(cell);
-										if (cell != null) {
-											rowData[j] = cell.getNumericCellValue();
-										}else {
-											rowData[j] = temp.getNumericCellValue();
-										}
-									}else {
-										rowData[j] = cell.getCellFormula();
-									}
-									break;
-								case BLANK: // 空值
-									rowData[j] = "";
-									break;
-								case ERROR: // 故障
-									rowData[j] = cell.getErrorCellValue();
-									break;
-								case _NONE: 
-									rowData[j] = "";
-									break;
-								default:
-									rowData[j] = "";
-									break;
-							}
-						}else {
-							rowData[j] = "";
-						}
+						rowData[j] = ExcelUtils.getCellValue(cell, formulaEvaluator);
 					}
 					// 判断该行是否为空
 					if (validateRowData != null && validateRowData.rowDataIsEmpty(rowData)) {
