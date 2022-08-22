@@ -70,7 +70,7 @@ public class ExcelUtils {
 			case BLANK: // 空值
 			case _NONE: 
 			default:
-				cellValue = "";
+				cellValue = XLPStringUtil.EMPTY;
 		}
 		return cellValue;
 	}
