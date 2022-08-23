@@ -44,6 +44,11 @@ public class ReadExcel {
 	private BlankRowOptionType blankRowOptionType = BlankRowOptionType.BREAK;
 	
 	/**
+	 * 标记是否读取所有sheet页数据，true：是，false：只读取第一个sheet页
+	 */
+	private boolean readAllSheet = false;
+	
+	/**
 	 * @param inputStream
 	 * @throws IOException 
 	 * @throws EncryptedDocumentException 假如用错误的密码去解析加密的excle文件，则抛出该异常
@@ -128,6 +133,7 @@ public class ReadExcel {
 			
 			//获取sheet页数量
 			int sheetCount = workbook.getNumberOfSheets();
+			sheetCount = sheetCount > 0 && !readAllSheet ? 1 : sheetCount;
 			SheetData sheetData;
 			for (int i = 0; i < sheetCount; i++) {
 				sheetData = new SheetData(workbook.getSheetAt(i));
@@ -330,5 +336,20 @@ public class ReadExcel {
 		if (blankRowOptionType != null) {
 			this.blankRowOptionType = blankRowOptionType;
 		}
+	}
+
+	/**
+	 * 标记是否读取所有sheet页数据，true：是，false：只读取第一个sheet页
+	 * @return 
+	 */
+	public boolean isReadAllSheet() {
+		return readAllSheet;
+	}
+
+	/**
+	 * @param readAllSheet 标记是否读取所有sheet页数据，true：是，false：只读取第一个sheet页
+	 */
+	public void setReadAllSheet(boolean readAllSheet) {
+		this.readAllSheet = readAllSheet;
 	}
 }

@@ -59,7 +59,7 @@ public class ExcelUtils {
 			case FORMULA: // 公式
 				if (formulaEvaluator != null) {
 					cell = formulaEvaluator.evaluateInCell(cell);
-					cellValue = getCellValue(cell, null);
+					cellValue = getCellValue(cell, formulaEvaluator);
 				}else {
 					cellValue = cell.getCellFormula();
 				}
